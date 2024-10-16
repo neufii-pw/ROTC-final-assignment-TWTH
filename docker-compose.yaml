@@ -1,0 +1,41 @@
+services:
+  backend:
+    build: ./crud_app
+    restart: always
+    secrets:
+      - db-password
+    ports:
+      - 8000:8000
+    networks:
+      - crud-postgres
+    environment:
+      db_address: db
+      db_username: postgres
+      db_name: postgres
+      db_password: /run/secrets/db-password
+
+  db:
+    image: postgres
+    restart: always
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - crud-postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: /run/secrets/db-password
+    expose:
+      - 5432
+
+volumes:
+  db-data:
+
+secrets:
+  db-password:
+    file: ./crud_app/password.txt
+
+networks:
+  crud-postgres:
