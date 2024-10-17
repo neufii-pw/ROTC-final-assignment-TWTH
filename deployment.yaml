@@ -1,17 +1,8 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: my-database-secret
-type: Opaque
-data:
-  DATABASE_PASSWORD: QXAwMHJQYSQkdzByZCE=
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres-deployment
+  namespace: crud-app
 spec:
   replicas: 1
   selector:
@@ -40,24 +31,11 @@ spec:
 
 ---
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-service
-spec:
-  selector:
-    app: postgres
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-deployment
+  namespace: crud-app
 spec:
   replicas: 1
   selector:
@@ -86,24 +64,3 @@ spec:
               key: DATABASE_PASSWORD
         ports:
         - containerPort: 8000
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-spec:
-  selector:
-    app: backend
-  ports:
-  - protocol: TCP
-    port: 8000
-    targetPort: 8000
-
----
-
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: crud-app
